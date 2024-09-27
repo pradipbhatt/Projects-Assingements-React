@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import emailjs from 'emailjs-com'; // Import EmailJS SDK
 import "@fontsource/roboto"; // Importing Roboto for form fields
 import linkedin from "../../public/linkedin.svg";
 import location from "../../public/location.svg";
@@ -8,11 +9,28 @@ import twitter from "../../public/twitter.svg";
 
 export default function ContactSection() {
   const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate successful submission
-    setSubmitted(true);
+
+    // Use EmailJS to send the email
+    emailjs.send('service_rpl4n2n', 'template_z8orwi3', formData, 'gA2JhY7UkblAK_HIT')
+      .then((response) => {
+        console.log('Email sent successfully!', response.status, response.text);
+        setSubmitted(true); // Set submitted state to true
+      }, (error) => {
+        console.error('Failed to send email. Error:', error);
+      });
   };
 
   return (
@@ -26,7 +44,6 @@ export default function ContactSection() {
           (and inboxes) are always open. With a team of dedicated professionals
           ready to assist, your inquiries are always in expert hands.
         </p>
-
         <div className="space-y-4">
           <p className="text-gray-700 flex items-center mb-2">
             <img src={location} alt="Location Icon" className="w-8 h-8 mr-4" />
@@ -40,7 +57,6 @@ export default function ContactSection() {
             <img src={phone} alt="Phone Icon" className="w-8 h-8 mr-4" />
             +966 500487676
           </p>
-
           <div className="flex space-x-4 mt-4">
             <a
               href="#"
@@ -79,7 +95,6 @@ export default function ContactSection() {
             </div>
             <h3 className="text-2xl font-semibold mb-2 tracking-wider">Message Received Successfully!</h3>
             <p className="text-gray-700 mb-4 tracking-widest">Thanks for your message, we will get back to you as soon as possible.</p>
-
             <button
               onClick={() => setSubmitted(false)} // Reset form on button click
               className="p-2 w-full bg-teal-900 text-white font-bold rounded-md shadow-md transition-colors duration-300 ease-in-out hover:bg-gradient-to-r hover:from-teal-800 hover:to-blue-200"
@@ -94,7 +109,10 @@ export default function ContactSection() {
               <label htmlFor="name" className="block text-gray-700 mb-2">Name</label>
               <input
                 type="text"
+                name="name" // Changed to use name attribute
                 id="name"
+                value={formData.name}
+                onChange={handleChange} // Handle input changes
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-opacity-50 focus:ring-black focus:ring-blue-500"
                 placeholder="Enter your name"
                 required
@@ -104,7 +122,10 @@ export default function ContactSection() {
               <label htmlFor="email" className="block text-gray-700 mb-2">Email</label>
               <input
                 type="email"
+                name="email" // Changed to use name attribute
                 id="email"
+                value={formData.email}
+                onChange={handleChange} // Handle input changes
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-opacity-50 focus:ring-black focus:ring-blue-500"
                 placeholder="Enter your email"
                 required
@@ -113,7 +134,10 @@ export default function ContactSection() {
             <div className="mb-6">
               <label htmlFor="message" className="block text-gray-700 mb-2">Message</label>
               <textarea
+                name="message" // Changed to use name attribute
                 id="message"
+                value={formData.message}
+                onChange={handleChange} // Handle input changes
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-opacity-50 focus:ring-black focus:ring-blue-500"
                 rows="4"
                 placeholder="Type your message.."
@@ -122,9 +146,9 @@ export default function ContactSection() {
             </div>
             <button
               type="submit"
-              className="w-full p-2 bg-[#04516180] text-white font-bold rounded-md shadow-md transition-colors duration-1400 ease-in-out hover:bg-gradient-to-r hover:from-teal-800 hover:to-blue-200"
+              className="w-full p-2 bg-[#04516180] text-white font-bold rounded-md shadow-md transition-colors duration-300 ease-in-out hover:bg-gradient-to-r hover:from-teal-800 hover:to-teal-400"
             >
-              SEND ➔
+              SEND MESSAGE
             </button>
           </form>
         )}
